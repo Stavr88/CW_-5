@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import requests
 import psycopg2
-from config import HOST, DB_NAME, USER, PASSWORD
+# from config import HOST, DB_NAME, USER, PASSWORD
 
 
 class Parser(ABC):
@@ -106,6 +106,6 @@ class HeadHunterAPI(Parser):
                 )
 
 
-a = HeadHunterAPI()
-a.load_in_postgresql(HOST, DB_NAME, USER, PASSWORD)
+# a = HeadHunterAPI()
+# a.load_in_postgresql(HOST, DB_NAME, USER, PASSWORD)
 
