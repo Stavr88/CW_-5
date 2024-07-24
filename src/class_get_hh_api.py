@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import requests
 import psycopg2
-# from config import HOST, DB_NAME, USER, PASSWORD
+
 
 
 class Parser(ABC):
@@ -50,9 +50,9 @@ class HeadHunterAPI(Parser):
             print('Ошибка подключения')
         return con
 
-    def load_in_postgresql(self, host: str, dbname: str, user: str, password: str):
+    def create_table_in_postgresql(self, host: str, dbname: str, user: str, password: str):
         """
-        Выполняет выгрузку данных с hh.ru о вакансиях и фирмах в БД PostgreSQL
+        Выполняет создание таблиц в БД PostgreSQL
         :return:
         """
         # Создаем таблицы в БД PostgreSQL
@@ -72,20 +72,30 @@ class HeadHunterAPI(Parser):
                 "url varchar(255), "
                 "employer_id int REFERENCES employers(employer_id))"
             )
-            # Загружаем данные в БД PostgreSQL с сайта hh.ru с условием если salary_from/salary_to нет, присвоить 0
-            response = requests.get(self.__url, headers=self.__headers, params=self.__params)
-            for item in response.json()['items']:
-                if item['salary'] is None:
-                    salary_from = 0
-                    salary_to = 0
-                else:
-                    salary_from = item['salary']['from']
-                    salary_to = item['salary']['to']
-                if salary_from == None:
-                    salary_from = 0
-                if salary_to == None:
-                    salary_to = 0
 
+    def load_in_postgresql(self, host: str, dbname: str, user: str, password: str):
+        """
+        Загружаем данные в БД PostgreSQL с сайта hh.ru с
+        условием если salary_from/salary_to нет, присвоить 0
+        :param host: str
+        :param dbname: str
+        :param user: str
+        :param password: str
+        :return:
+        """
+        response = requests.get(self.__url, headers=self.__headers, params=self.__params)
+        for item in response.json()['items']:
+            if item['salary'] is None:
+                salary_from = 0
+                salary_to = 0
+            else:
+                salary_from = item['salary']['from']
+                salary_to = item['salary']['to']
+            if salary_from == None:
+                salary_from = 0
+            if salary_to == None:
+                salary_to = 0
+            with self.connect_postgresql(host, dbname, user, password).cursor() as curs:
                 curs.execute(
                     "INSERT INTO employers (employer_id, company_name, url) "
                     "VALUES (%s, %s, %s) ON CONFLICT DO NOTHING",
@@ -105,7 +115,4 @@ class HeadHunterAPI(Parser):
                      item['employer']['id'])
                 )
 
-
-# a = HeadHunterAPI()
-# a.load_in_postgresql(HOST, DB_NAME, USER, PASSWORD)
 
