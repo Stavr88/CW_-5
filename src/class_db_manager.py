@@ -86,7 +86,8 @@ class DBManager:
         Получает список всех вакансий, в названии
         которых содержатся переданные в метод слова, например "python".
         """
-        query = f"SELECT title, salary_from, salary_to, url FROM vacancies WHERE title LIKE '%{keyword}%'"
+        query = f"SELECT title, salary_from, salary_to, url FROM vacancies WHERE title ILIKE '%{keyword}%'"
         with self.con.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
+
