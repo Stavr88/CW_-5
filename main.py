@@ -19,8 +19,8 @@ def main():
     count = 0
     while count:
         get_hh_api = HeadHunterAPI()
-        get_hh_api.create_table_in_postgresql(HOST, DB_NAME, USER, PASSWORD)  # после первого запуска необходимо замутить
-        get_hh_api.load_in_postgresql(HOST, DB_NAME, USER, PASSWORD)  # после первого запуска необходимо замутить
+        get_hh_api.create_table_in_postgresql(HOST, DB_NAME, USER, PASSWORD)
+        get_hh_api.load_in_postgresql(HOST, DB_NAME, USER, PASSWORD)
         count -= 1
     d_b_m = DBManager(HOST, DB_NAME, USER, PASSWORD)
     # создаем переменные с экземплярами классов для словаря
@@ -28,7 +28,6 @@ def main():
     get_all_vacancies = d_b_m.get_all_vacancies()
     get_avg_salary = d_b_m.get_avg_salary()
     get_vacancies_with_higher_salary = d_b_m.get_vacancies_with_higher_salary()
-
     # создание словаря с методами класса DBManager
     user_commands = {
         "a": get_companies_and_vacancies_count,
@@ -36,17 +35,19 @@ def main():
         "c": get_avg_salary,
         "d": get_vacancies_with_higher_salary
     }
+
     while True:
         for _ in user_commands:
             choice = input("Введите значение a,b,c,d (для п.п. a,b,c,d)\n"
                            " или ключевое слово например 'python' (для п.п.f)\n "
                            "или слова 'стоп', 'stop' для завершения поиска:")
+            print()
             if choice == "стоп" or choice == "stop":
                 break
             else:
                 if choice == "a":
                     for company in user_commands[choice]:
-                        print(f"{company[0]} - {company[1]} вакансий")
+                        print(f"{company[0]} - {company[1]} вакансий\n")
 
                 elif choice == "b":
                     for company_vac in user_commands[choice]:
@@ -58,10 +59,10 @@ def main():
                             salary = "Зарплата от " + str(company_vac[1]) + " руб."
                         else:
                             salary = "Зарплата от " + str(company_vac[1]) + " до " + str(company_vac[2]) + "  руб."
-                        print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]} Компания: {company_vac[4]}")
+                        print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]} Компания: {company_vac[4]}\n")
 
                 elif choice == "c":
-                    print(f"Средняя зарплата по вакансиям составляет {int(user_commands[choice])} руб.")
+                    print(f"Средняя зарплата по вакансиям составляет {int(user_commands[choice])} руб.\n")
 
                 elif choice == "d":
                     for company_vac in user_commands[choice]:
@@ -74,7 +75,7 @@ def main():
                         else:
                             salary = "Зарплата от " + str(company_vac[1]) + " до " + str(company_vac[2]) + "  руб."
 
-                        print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]} Компания: {company_vac[4]}")
+                        print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]} Компания: {company_vac[4]}\n")
 
                 else:
                     get_vacancies_with_keyword = d_b_m.get_vacancies_with_keyword(choice)
@@ -91,7 +92,7 @@ def main():
                             else:
                                 salary = "Зарплата от " + str(company_vac[1]) + " до " + str(company_vac[2]) + "  руб."
 
-                            print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]} ")
+                            print(f"{company_vac[0]}. {salary} Ссылка: {company_vac[3]}\n ")
 
 
 if __name__ == '__main__':
